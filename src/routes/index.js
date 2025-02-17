@@ -1,7 +1,7 @@
 const express = require('express');
-const personaRoutes = require('./personaRoutes');
+const profesorRoutes = require('./profesorRoutes');
 
 const router = express.Router();
-router.use('/personas', personaRoutes);
+router.use('/profesor', profesorRoutes);
 
 module.exports = router;

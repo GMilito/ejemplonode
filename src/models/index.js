@@ -1,4 +1,4 @@
-const sequelize = require("../db");
+const sequelize = require("../config/database");
 const TipoIdentificacion = require("./TipoIdentificacion");
 const Institucion = require("./Institucion");
 const Profesor = require("./Profesor");
