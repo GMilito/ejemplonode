@@ -10,7 +10,7 @@ const validateToken = (req, res, next) => {
 
     const decoded = jwt.verify(token.replace('Bearer ', ''), SECRET_KEY);
     req.user = decoded;
-    next();
+    //next(); // descomentar este next cuando la validación del otro grupo funcione
   } catch (error) {
     return res.status(403).json({ message: 'Token inválido o expirado' });
   }

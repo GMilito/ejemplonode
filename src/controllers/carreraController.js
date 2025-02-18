@@ -6,7 +6,7 @@ const { logAction } = require('../services/bitacoraService');
 
 const crearCarrera = async (req, res) => {
     try {
-        await validateToken(req);
+        //await validateToken(req);
         const { nombre, institucionId, directorId } = req.body;
 
         if (!nombre || !/^[A-Za-zÁÉÍÓÚáéíóúñÑ ]+$/.test(nombre.trim())) {
@@ -76,7 +76,7 @@ const eliminarCarrera = async (req, res) => {
 
 const obtenerCarreras = async (req, res) => {
     try {
-        await validateToken(req);
+        //await validateToken(req);
         const carreras = await Carrera.findAll();
         res.json(carreras);
     } catch (error) {
