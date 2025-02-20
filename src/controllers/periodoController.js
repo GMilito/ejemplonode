@@ -1,4 +1,4 @@
-const { Profesor, ProfesorTelefono, TipoIdentificacion } = require("../models");
+const { Periodo } = require("../models");
 const { Op } = require("sequelize");
 const jwt = require("jsonwebtoken");
 const { registrarBitacora } = require("../services/bitacoraService");
@@ -21,12 +21,12 @@ const verificarToken = (req, res, next) => {
   }
 };
 
-// 📌 Obtener todos los profesores
-const obtenerProfesores = async (req, res) => {
+// 📌 Obtener todos los Periodos
+const obtenerPeriodos = async (req, res) => {
   try {
 
-    const profesores = await Profesor.findAll({ include: [TipoIdentificacion, ProfesorTelefono] });
-    await registrarBitacora(req.headers["authorization"], "Consulta", "Obtener todos los profesores");
+    const profesores = await Periodo.findAll();
+    await registrarBitacora(req.headers["authorization"], "Consulta", "Obtener todos los periodos");
     res.json(profesores);
   } catch (error) {
     console.error("Error en obtenerProfesores:", error);
@@ -34,23 +34,23 @@ const obtenerProfesores = async (req, res) => {
   }
 };
 
-// 📌 Obtener profesor por ID
-const obtenerProfesorPorId = async (req, res) => {
+// 📌 Obtener Periodo por ID
+const obtenerPeriodosPorId = async (req, res) => {
   try {
     const { id } = req.params;
-    const profesor = await Profesor.findByPk(id, { include: [TipoIdentificacion, ProfesorTelefono] });
+    const profesor = await Periodo.findByPk(id, { include: [TipoIdentificacion, ProfesorTelefono] });
 
     if (!profesor) return res.status(404).json({ error: "Profesor no encontrado" });
 
-    await registrarBitacora(req.headers["authorization"], "Consulta", `Obtener profesor con ID ${id}`);
+    await registrarBitacora(req.headers["authorization"], "Consulta", `Obtener Periodo con ID ${id}`);
     res.json(profesor);
   } catch (error) {
-    res.status(500).json({ error: "Error al obtener el profesor" });
+    res.status(500).json({ error: "Error al obtener el Periodo" });
   }
 };
 
-// 📌 Crear profesor
-const crearProfesor = async (req, res) => {
+// 📌 Crear Periodo
+const crearPeriodo = async (req, res) => {
   try {
     console.log(req.body)
     const { identificacion, tipo_identificacion_id, email, nombre_completo, fecha_nacimiento, telefonos } = req.body;
@@ -141,7 +141,7 @@ const eliminarProfesor = async (req, res) => {
 
 // Exportar funciones
 module.exports = {
-  obtenerProfesores,
+  obtenerPeriodos,
   obtenerProfesorPorId,
   crearProfesor,
   modificarProfesor,
