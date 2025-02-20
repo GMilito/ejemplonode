@@ -1,26 +1,52 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database");
-const Curso = require("./Curso");
-const Profesor = require("./Profesor");
-const Periodo = require("./Periodo");
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+const { Curso } = require('./Curso');
 
-const Grupo = sequelize.define("Grupo", {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  curso_id: { 
-    type: DataTypes.INTEGER, 
-    allowNull: false, 
-    references: { model: Curso, key: "id" },
-  },
-  profesor_id: { 
-    type: DataTypes.INTEGER, 
-    allowNull: false, 
-    references: { model: Profesor, key: "id" },
-  },
-  periodo_id: { 
-    type: DataTypes.INTEGER, 
-    allowNull: false, 
-    references: { model: Periodo, key: "id" },
-  },
+const Grupo = sequelize.define('Grupo', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    numero: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+            notEmpty: { msg: 'El número del grupo no puede estar vacío' }
+        }
+    },
+    cursoId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Curso,
+            key: 'id'
+        }
+    },
+    profesorId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+            notEmpty: { msg: 'El profesor que imparte el grupo no puede estar vacío' }
+        }
+    },
+    horario: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            notEmpty: { msg: 'El horario no puede estar vacío' }
+        }
+    },
+    periodo: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            notEmpty: { msg: 'El periodo no puede estar vacío' }
+        }
+    }
+}, {
+    tableName: 'grupos',
+    timestamps: true
 });
 
-module.exports = InstitucionCarrera;
+module.exports = { Grupo };
