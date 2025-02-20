@@ -9,6 +9,15 @@ const options = {
       version: '1.0.0',
       description: 'Documentación de los requerimientos ACD1, ACD2, ACD3, ACD4, ACD5, ACD6',
     },
+    components: { // <-- Añade esta sección
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+        },
+      },
   },
   apis: ['./src/routes/*.js'], // Rutas donde se encuentran tus archivos de rutas
 };

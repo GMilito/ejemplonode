@@ -4,12 +4,12 @@ const { validateToken } = require('../middleware/authMiddleware');
 const grupoController = {
   async create(req, res) {
     try {
-      await validateToken(req, res);
-      const { numero, cursoId, profesorId, horario, periodoId } = req.body;
-      if (!numero || !cursoId || !profesorId || !horario || !periodoId) {
+      //await validateToken(req, res);
+      const { numero, cursoId, profesorId, horario, periodo } = req.body;
+      if (!numero || !cursoId || !profesorId || !horario || !periodo) {
         return res.status(400).json({ message: 'Todos los campos son requeridos' });
       }
-      const grupo = await Grupo.create({ numero, cursoId, profesorId, horario, periodoId });
+      const grupo = await Grupo.create({ numero, cursoId, profesorId, horario, periodo });
       res.status(201).json(grupo);
     } catch (error) {
       res.status(500).json({ message: 'Error al crear el grupo', error });
@@ -72,4 +72,4 @@ const grupoController = {
   }
 };
 
-module.exports = {grupoController};
+module.exports = { grupoController };

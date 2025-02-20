@@ -3,8 +3,9 @@ const { validateToken } = require('../middleware/authMiddleware');
 const { logAction } = require('../services/bitacoraService');
 
 const crearInstitucion = async (req, res) => {
+    //req.user.id = 1; // Comentar esta linea cuando funcione la validacion de usuario
     try {
-        await validateToken(req);
+        //await validateToken(req);
         const { nombre } = req.body;
 
         if (!nombre || !/^[A-Za-zÁÉÍÓÚáéíóúñÑ ]+$/.test(nombre.trim())) {
@@ -21,7 +22,7 @@ const crearInstitucion = async (req, res) => {
 
 const modificarInstitucion = async (req, res) => {
     try {
-        await validateToken(req);
+        //await validateToken(req);
         const { id } = req.params;
         const { nombre } = req.body;
 
@@ -43,15 +44,16 @@ const modificarInstitucion = async (req, res) => {
 
 const eliminarInstitucion = async (req, res) => {
     try {
-        await validateToken(req);
+        //await validateToken(req);
         const { id } = req.params;
 
         const institucion = await Institucion.findByPk(id);
         if (!institucion) return res.status(404).json({ message: 'Institución no encontrada' });
 
+        const _institucion = institucion;
         await institucion.destroy();
         await logAction(req.user.id, 'Eliminar', 'Institucion', id);
-        res.status(204).send();
+        res.status(204).json({institucion: _institucion});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -59,7 +61,7 @@ const eliminarInstitucion = async (req, res) => {
 
 const obtenerInstituciones = async (req, res) => {
     try {
-        await validateToken(req);
+        //await validateToken(req);
         const instituciones = await Institucion.findAll();
         res.json(instituciones);
     } catch (error) {
@@ -69,8 +71,9 @@ const obtenerInstituciones = async (req, res) => {
 
 const obtenerInstitucionPorId = async (req, res) => {
     try {
-        await validateToken(req);
+        //await validateToken(req);
         const { id } = req.params;
+        //console.log(id);
 
         const institucion = await Institucion.findByPk(id);
         if (!institucion) return res.status(404).json({ message: 'Institución no encontrada' });

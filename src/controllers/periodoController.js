@@ -4,12 +4,12 @@ const { validateToken } = require('../middleware/authMiddleware');
 const periodoController = {
   async create(req, res) {
     try {
-      await validateToken(req, res);
-      const { anio, numeroPeriodo, fechaInicio, fechaFin } = req.body;
-      if (!anio || !numeroPeriodo || !fechaInicio || !fechaFin) {
+      //await validateToken(req, res);
+      const { anio, numero, fechaInicio, fechaFin } = req.body;
+      if (!anio || !numero || !fechaInicio || !fechaFin) {
         return res.status(400).json({ message: 'Todos los campos son requeridos' });
       }
-      const periodo = await Periodo.create({ anio, numeroPeriodo, fechaInicio, fechaFin });
+      const periodo = await Periodo.create({ anio, numero, fechaInicio, fechaFin });
       res.status(201).json(periodo);
     } catch (error) {
       res.status(500).json({ message: 'Error al crear el periodo', error });
@@ -18,14 +18,14 @@ const periodoController = {
 
   async update(req, res) {
     try {
-      await validateToken(req, res);
+      //await validateToken(req, res);
       const { id } = req.params;
-      const { anio, numeroPeriodo, fechaInicio, fechaFin } = req.body;
+      const { anio, numero, fechaInicio, fechaFin } = req.body;
       const periodo = await Periodo.findByPk(id);
       if (!periodo) {
         return res.status(404).json({ message: 'Periodo no encontrado' });
       }
-      await periodo.update({ anio, numeroPeriodo, fechaInicio, fechaFin });
+      await periodo.update({ anio, numero, fechaInicio, fechaFin });
       res.json(periodo);
     } catch (error) {
       res.status(500).json({ message: 'Error al actualizar el periodo', error });
@@ -34,7 +34,7 @@ const periodoController = {
 
   async delete(req, res) {
     try {
-      await validateToken(req, res);
+      //await validateToken(req, res);
       const { id } = req.params;
       const periodo = await Periodo.findByPk(id);
       if (!periodo) {
@@ -49,7 +49,7 @@ const periodoController = {
 
   async getAll(req, res) {
     try {
-      await validateToken(req, res);
+      //await validateToken(req, res);
       const periodos = await Periodo.findAll();
       res.json(periodos);
     } catch (error) {
@@ -59,7 +59,7 @@ const periodoController = {
 
   async getById(req, res) {
     try {
-      await validateToken(req, res);
+      //await validateToken(req, res);
       const { id } = req.params;
       const periodo = await Periodo.findByPk(id);
       if (!periodo) {

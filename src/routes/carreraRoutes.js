@@ -13,7 +13,7 @@ const { validateToken } = require('../middleware/authMiddleware');
 
 /**
  * @swagger
- * /carreras:
+ * /carrera:
  *   post:
  *     summary: Crea una nueva carrera
  *     tags: [Carreras]
@@ -49,10 +49,10 @@ const { validateToken } = require('../middleware/authMiddleware');
  *       500:
  *         description: Error del servidor
  */
-router.post('/', /*validateToken,*/ crearCarrera);
+router.post('/', validateToken, crearCarrera);
 /**
  * @swagger
- * /carreras/{id}:
+ * /carrera/{id}:
  *   put:
  *     summary: Modifica una carrera existente
  *     tags: [Carreras]
@@ -95,10 +95,10 @@ router.post('/', /*validateToken,*/ crearCarrera);
  *       500:
  *         description: Error del servidor
  */
-router.put('/:id', /*validateToken,*/ modificarCarrera);
+router.put('/:id', validateToken, modificarCarrera);
 /**
  * @swagger
- * /carreras/{id}:
+ * /carrera/{id}:
  *   delete:
  *     summary: Elimina una carrera
  *     tags: [Carreras]
@@ -119,10 +119,10 @@ router.put('/:id', /*validateToken,*/ modificarCarrera);
  *       500:
  *         description: Error del servidor
  */
-router.delete('/:id', /*validateToken,*/ eliminarCarrera);
+router.delete('/:id', validateToken, eliminarCarrera);
 /**
  * @swagger
- * /carreras:
+ * /carrera:
  *   get:
  *     summary: Obtiene todas las carreras
  *     tags: [Carreras]
@@ -134,10 +134,10 @@ router.delete('/:id', /*validateToken,*/ eliminarCarrera);
  *       500:
  *         description: Error del servidor
  */
-router.get('/', obtenerCarreras);
+router.get('/',validateToken, obtenerCarreras);
 /**
  * @swagger
- * /carreras/{id}:
+ * /carrera/{id}:
  *   get:
  *     summary: Obtiene una carrera por ID
  *     tags: [Carreras]
@@ -158,10 +158,10 @@ router.get('/', obtenerCarreras);
  *       500:
  *         description: Error del servidor
  */
-router.get('/:id', obtenerCarreraPorId);
+router.get('/:id', validateToken ,obtenerCarreraPorId);
 /**
  * @swagger
- * /carreras/institucion/{institucionId}:
+ * /carrera/institucion/{institucionId}:
  *   get:
  *     summary: Obtiene carreras por ID de institución
  *     tags: [Carreras]
@@ -180,6 +180,6 @@ router.get('/:id', obtenerCarreraPorId);
  *       500:
  *         description: Error del servidor
  */
-router.get('/institucion/:institucionId', obtenerCarrerasPorInstitucion);
+router.get('/institucion/:institucionId', validateToken, obtenerCarrerasPorInstitucion);
 
 module.exports = router;

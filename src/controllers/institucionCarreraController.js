@@ -4,7 +4,7 @@ const { validateToken } = require('../middleware/authMiddleware');
 const institucionCarreraController = {
   async create(req, res) {
     try {
-      await validateToken(req, res);
+      //await validateToken(req, res);
       const { institucionId, carreraId } = req.body;
       if (!institucionId || !carreraId) {
         return res.status(400).json({ message: 'Todos los campos son requeridos' });
@@ -18,7 +18,7 @@ const institucionCarreraController = {
 
   async update(req, res) {
     try {
-      await validateToken(req, res);
+      //await validateToken(req, res);
       const { id } = req.params;
       const { institucionId, carreraId } = req.body;
       const institucionCarrera = await InstitucionCarrera.findByPk(id);
@@ -34,7 +34,7 @@ const institucionCarreraController = {
 
   async delete(req, res) {
     try {
-      await validateToken(req, res);
+      //await validateToken(req, res);
       const { id } = req.params;
       const institucionCarrera = await InstitucionCarrera.findByPk(id);
       if (!institucionCarrera) {
@@ -49,7 +49,7 @@ const institucionCarreraController = {
 
   async getAll(req, res) {
     try {
-      await validateToken(req, res);
+      //await validateToken(req, res);
       const relaciones = await InstitucionCarrera.findAll();
       res.json(relaciones);
     } catch (error) {
@@ -59,7 +59,7 @@ const institucionCarreraController = {
 
   async getById(req, res) {
     try {
-      await validateToken(req, res);
+      //await validateToken(req, res);
       const { id } = req.params;
       const institucionCarrera = await InstitucionCarrera.findByPk(id);
       if (!institucionCarrera) {
