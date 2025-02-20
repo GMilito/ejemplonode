@@ -1,7 +1,12 @@
-const express = require('express');
-const personaRoutes = require('./personaRoutes');
-
+const express = require("express");
 const router = express.Router();
-router.use('/personas', personaRoutes);
+
+const cursoRoutes = require("./cursoRoutes");
+const profesorRoutes = require("./profesorRoutes");
+const bitacoraRoutes = require("./bitacoraRoutes");
+
+router.use("/curso", cursoRoutes);
+router.use("/profesor", profesorRoutes);
+router.use("/bitacora", bitacoraRoutes);
 
 module.exports = router;
