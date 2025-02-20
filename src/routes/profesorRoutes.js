@@ -7,7 +7,7 @@ const verificarToken = require("../middlewares/AuthMiddleware");
 router.get("/", verificarToken, profesorController.obtenerProfesores);
 router.get("/:id", verificarToken, profesorController.obtenerProfesorPorId);
 router.post("/", verificarToken, profesorController.crearProfesor);
-router.put("/:id", verificarToken, profesorController.modificarProfesor);
+router.patch("/:id", verificarToken, profesorController.modificarProfesor);
 router.delete("/:id", verificarToken, profesorController.eliminarProfesor);
 
 module.exports = router;

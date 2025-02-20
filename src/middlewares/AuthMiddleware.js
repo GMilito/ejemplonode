@@ -10,11 +10,12 @@ const verificarToken = async (req, res, next) => {
   }
 
   try {
-    const response = await axios.post(AUTH_SERVICE_URL, { token });
+    const response = await axios.get(AUTH_SERVICE_URL, { token });
 
-    if (response.status === 200 && response.data === true) {
+    if (response.status === 200) {
       next(); // Token válido, continuar con la solicitud
     } else {
+      console.log(response.status);
       return res.status(401).json({ error: "Token inválido" });
     }
   } catch (error) {
