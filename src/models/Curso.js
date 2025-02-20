@@ -12,7 +12,7 @@ const Curso = sequelize.define("Curso", {
     references: { model: Carrera, key: "id" },
   },
 }, {
-  timestamps: true, // Esto activa automáticamente createdAt y updatedAt
+  timestamps: true,
 });
 
 Curso.belongsTo(Carrera, { foreignKey: "carrera_id", onDelete: "CASCADE", onUpdate: "CASCADE" });

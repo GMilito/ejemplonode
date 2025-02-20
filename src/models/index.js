@@ -6,7 +6,7 @@ const ProfesorTelefono = require("./ProfesorTelefono");
 const Carrera = require("./Carrera");
 const InstitucionCarrera = require("./InstitucionCarrera");
 const Curso = require("./Curso");
-const Bitacora = require("./Bitacora"); // Agregar Bitacora
+const Bitacora = require("./Bitacora");
 
 Profesor.belongsTo(TipoIdentificacion, { foreignKey: "tipo_identificacion_id" });
 
@@ -14,6 +14,9 @@ Profesor.hasMany(ProfesorTelefono, { foreignKey: "profesor_id" });
 ProfesorTelefono.belongsTo(Profesor, { foreignKey: "profesor_id" });
 
 Carrera.belongsTo(Profesor, { foreignKey: "profesor_id" });
+
+Carrera.belongsToMany(Institucion, { through: InstitucionCarrera, foreignKey: "carrera_id", otherKey: "institucion_id" });
+Institucion.belongsToMany(Carrera, { through: InstitucionCarrera, foreignKey: "institucion_id", otherKey: "carrera_id" });
 
 InstitucionCarrera.belongsTo(Institucion, { foreignKey: "institucion_id" });
 InstitucionCarrera.belongsTo(Carrera, { foreignKey: "carrera_id" });
