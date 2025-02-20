@@ -1,9 +1,10 @@
 const { Institucion } = require('../models/Institucion');
 const { validateToken } = require('../middleware/authMiddleware');
-const { logAction } = require('../services/bitacoraService');
+const { registrarEvento } = require('../services/bitacoraService');
 
 const crearInstitucion = async (req, res) => {
     //req.user.id = 1; // Comentar esta linea cuando funcione la validacion de usuario
+    console.log(req);
     try {
         //await validateToken(req);
         const { nombre } = req.body;
@@ -13,7 +14,7 @@ const crearInstitucion = async (req, res) => {
         }
 
         const institucion = await Institucion.create({ nombre: nombre.trim() });
-        await logAction(req.user.id, 'Crear', 'Institucion', institucion.id);
+        await registrarEvento(req.user.id, 'Crear', 'Institucion', institucion.id);
         res.status(201).json(institucion);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -35,7 +36,7 @@ const modificarInstitucion = async (req, res) => {
 
         institucion.nombre = nombre.trim();
         await institucion.save();
-        await logAction(req.user.id, 'Modificar', 'Institucion', institucion.id);
+        await registrarEvento(req.user.id, 'Modificar', 'Institucion', institucion.id);
         res.json(institucion);
     } catch (error) {
         res.status(500).json({ message: error.message });

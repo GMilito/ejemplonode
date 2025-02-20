@@ -18,7 +18,7 @@ const grupoController = {
 
   async update(req, res) {
     try {
-      await validateToken(req, res);
+      //await validateToken(req, res);
       const { id } = req.params;
       const { numero, cursoId, profesorId, horario, periodoId } = req.body;
       const grupo = await Grupo.findByPk(id);
@@ -34,7 +34,7 @@ const grupoController = {
 
   async delete(req, res) {
     try {
-      await validateToken(req, res);
+      //await validateToken(req, res);
       const { id } = req.params;
       const grupo = await Grupo.findByPk(id);
       if (!grupo) {
@@ -49,7 +49,7 @@ const grupoController = {
 
   async getAll(req, res) {
     try {
-      await validateToken(req, res);
+      //await validateToken(req, res);
       const grupos = await Grupo.findAll();
       res.json(grupos);
     } catch (error) {
@@ -59,7 +59,7 @@ const grupoController = {
 
   async getById(req, res) {
     try {
-      await validateToken(req, res);
+      //await validateToken(req, res);
       const { id } = req.params;
       const grupo = await Grupo.findByPk(id);
       if (!grupo) {
