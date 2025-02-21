@@ -59,6 +59,17 @@ const crearProfesor = async (req, res) => {
       return res.status(400).json({ error: "Todos los campos son obligatorios" });
     }
 
+    if (
+      String(identificacion).trim() === "" ||
+      String(tipo_identificacion_id).trim() === "" ||
+      String(email).trim() === "" ||
+      String(nombre_completo).trim() === "" ||
+      String(fecha_nacimiento).trim() === "" ||
+      telefonos.some(tel => String(tel).trim() === "")
+    ) {
+      return res.status(400).json({ error: "No puedes enviar vacíos" });
+    }
+
     if (!validarNombre(nombre_completo)) {
       return res.status(400).json({ error: "Nombre inválido (solo letras y espacios)" });
     }
