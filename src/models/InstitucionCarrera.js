@@ -2,6 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 const Institucion = require("./Institucion");
 const Carrera = require("./Carrera");
+const sequelize = require("../config/database");
 
 const InstitucionCarrera = sequelize.define("InstitucionCarrera", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
