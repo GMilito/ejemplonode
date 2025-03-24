@@ -4,6 +4,7 @@ require('dotenv').config();
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
     host: process.env.DB_HOST,
     dialect: 'mssql',
+    logging: console.log,
     dialectOptions: {
         options: {
             encrypt: false, // Desactivar SSL si es local
