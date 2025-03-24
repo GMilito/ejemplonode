@@ -1,19 +1,36 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database");
-const Profesor = require("./Profesor");
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const Bitacora = sequelize.define("Bitacora", {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  profesor_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: { model: Profesor, key: "id" },
-  },
-  accion: { type: DataTypes.STRING(50), allowNull: false },
-  descripcion: { type: DataTypes.TEXT, allowNull: false },
-  fecha: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW }
+const Bitacora = sequelize.define('Bitacora', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    usuario: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    accion: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    entidad: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    entidadId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    fecha: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW
+    }
+}, {
+    timestamps: false,
+    tableName: 'bitacora'
 });
-
-Bitacora.belongsTo(Profesor, { foreignKey: "profesor_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
 
 module.exports = Bitacora;

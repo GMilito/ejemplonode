@@ -1,105 +1,120 @@
-const Carrera = require("../models/Carrera");
-const Profesor = require("../models/Profesor");
-const Institucion = require("../models/Institucion");
-const InstitucionCarrera = require("../models/InstitucionCarrera");
-const { registrarBitacora } = require("../services/bitacoraService");
-const { Op } = require("sequelize");
-
-const obtenerCarreras = async (req, res) => {
-  try {
-    const carreras = await Carrera.findAll();
-    await registrarBitacora(req.profesor_id, "Consulta", "Obtener todas las carreras");
-    res.json(carreras);
-  } catch (error) {
-    console.error("Error en obtenerCarreras:", error);
-    res.status(500).json({ error: "Error al obtener carreras" });
-  }
-};
-
-const obtenerCarreraPorId = async (req, res) => {
-  try {
-    const carrera = await Carrera.findByPk(req.params.id);
-    if (!carrera) return res.status(404).json({ error: "Carrera no encontrada" });
-
-    await registrarBitacora(req.profesor_id, "Consulta", `Obtener carrera con ID ${req.params.id}`);
-    res.json(carrera);
-  } catch (error) {
-    console.error("Error en obtenerCarreraPorId:", error);
-    res.status(500).json({ error: "Error al obtener carrera" });
-  }
-};
-
-const obtenerCarrerasPorInstitucion = async (req, res) => {
-  try {
-
-    const carreras = await Carrera.findAll({
-      include: {
-        model: Institucion,
-        through: { attributes: [] },
-        where: { id: req.params.id },
-      }
-    });
-
-    await registrarBitacora(req.profesor_id, "Consulta", `Obtener carreras por institución ${req.params.id}`);
-    
-    res.json(carreras);
-  } catch (error) {
-    console.error("Error en obtenerCarrerasPorInstitucion:", error);
-    res.status(500).json({ error: "Error al obtener carreras por institución" });
-  }
-};
+const { Carrera } = require('../models/Carrera');
+const { Institucion } = require('../models/Institucion');
+const { Profesor } = require('../models/Profesor');
+const { validateToken } = require('../middleware/authMiddleware');
+const { logAction } = require('../services/bitacoraService');
 
 const crearCarrera = async (req, res) => {
-  try {
-    const { nombre, profesor_id } = req.body;
+    try {
+        await validateToken(req);
+        const { nombre, institucionId, directorId } = req.body;
 
-    if (!nombre || !profesor_id) {
-      return res.status(400).json({ error: "Todos los campos son obligatorios" });
-    }
-    if (!/^[a-zA-Z\s]+$/.test(nombre)) {
-      return res.status(400).json({ error: "Nombre inválido" });
-    }
+        if (!nombre || !/^[A-Za-zÁÉÍÓÚáéíóúñÑ ]+$/.test(nombre.trim())) {
+            return res.status(400).json({ message: 'Nombre inválido' });
+        }
 
-    const profesor = await Profesor.findByPk(profesor_id);
-    if (!profesor) {
-      return res.status(400).json({ error: "El director no existe en el sistema" });
-    }
+        const institucion = await Institucion.findByPk(institucionId);
+        if (!institucion) return res.status(404).json({ message: 'Institución no encontrada' });
 
-    const carrera = await Carrera.create({ nombre, profesor_id });
-    await registrarBitacora(req.profesor_id, "Creación", `Carrera creada con ID ${carrera.id}`);
-    res.status(201).json(carrera);
-  } catch (error) {
-    console.error("Error en crearCarrera:", error);
-    res.status(500).json({ error: "Error al crear carrera" });
-  }
+        const profesor = await Profesor.findByPk(directorId);
+        if (!profesor) return res.status(404).json({ message: 'Director no registrado como profesor' });
+
+        const carrera = await Carrera.create({ nombre: nombre.trim(), institucionId, directorId });
+        await logAction(req.user.id, 'Crear', 'Carrera', carrera.id);
+        res.status(201).json(carrera);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
 const modificarCarrera = async (req, res) => {
-  try {
-    const carrera = await Carrera.findByPk(req.params.id);
-    if (!carrera) return res.status(404).json({ error: "Carrera no encontrada" });
+    try {
+        await validateToken(req);
+        const { id } = req.params;
+        const { nombre, institucionId, directorId } = req.body;
 
-    await carrera.update(req.body);
-    await registrarBitacora(req.profesor_id, "Modificación", `Carrera actualizada con ID ${req.params.id}`);
-    res.json(carrera);
-  } catch (error) {
-    console.error("Error en modificarCarrera:", error);
-    res.status(500).json({ error: "Error al modificar carrera" });
-  }
+        const carrera = await Carrera.findByPk(id);
+        if (!carrera) return res.status(404).json({ message: 'Carrera no encontrada' });
+
+        if (!nombre || !/^[A-Za-zÁÉÍÓÚáéíóúñÑ ]+$/.test(nombre.trim())) {
+            return res.status(400).json({ message: 'Nombre inválido' });
+        }
+
+        const institucion = await Institucion.findByPk(institucionId);
+        if (!institucion) return res.status(404).json({ message: 'Institución no encontrada' });
+
+        const profesor = await Profesor.findByPk(directorId);
+        if (!profesor) return res.status(404).json({ message: 'Director no registrado como profesor' });
+
+        carrera.nombre = nombre.trim();
+        carrera.institucionId = institucionId;
+        carrera.directorId = directorId;
+        await carrera.save();
+
+        await logAction(req.user.id, 'Modificar', 'Carrera', carrera.id);
+        res.json(carrera);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
 const eliminarCarrera = async (req, res) => {
-  try {
-    const carrera = await Carrera.findByPk(req.params.id);
-    if (!carrera) return res.status(404).json({ error: "Carrera no encontrada" });
+    try {
+        await validateToken(req);
+        const { id } = req.params;
 
-    await carrera.destroy();
-    await registrarBitacora(req.profesor_id, "Eliminación", `Carrera eliminada con ID ${req.params.id}`);
-    res.json({ mensaje: "Carrera eliminada" });
-  } catch (error) {
-    console.error("Error en eliminarCarrera:", error);
-    res.status(500).json({ error: "Error al eliminar carrera" });
-  }
+        const carrera = await Carrera.findByPk(id);
+        if (!carrera) return res.status(404).json({ message: 'Carrera no encontrada' });
+
+        await carrera.destroy();
+        await logAction(req.user.id, 'Eliminar', 'Carrera', id);
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
-module.exports = { obtenerCarreras, obtenerCarreraPorId, obtenerCarrerasPorInstitucion, crearCarrera, modificarCarrera, eliminarCarrera };
+const obtenerCarreras = async (req, res) => {
+    try {
+        await validateToken(req);
+        const carreras = await Carrera.findAll();
+        res.json(carreras);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const obtenerCarreraPorId = async (req, res) => {
+    try {
+        await validateToken(req);
+        const { id } = req.params;
+
+        const carrera = await Carrera.findByPk(id);
+        if (!carrera) return res.status(404).json({ message: 'Carrera no encontrada' });
+
+        res.json(carrera);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const obtenerCarrerasPorInstitucion = async (req, res) => {
+    try {
+        await validateToken(req);
+        const { institucionId } = req.params;
+
+        const carreras = await Carrera.findAll({ where: { institucionId } });
+        res.json(carreras);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = {
+    crearCarrera,
+    modificarCarrera,
+    eliminarCarrera,
+    obtenerCarreras,
+    obtenerCarreraPorId,
+    obtenerCarrerasPorInstitucion
+};

@@ -1,7 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-const routes = require('./routes');
+
+const institucionRoutes = require("./routes/institucionRoutes");
+const authRoutes = require("./routes/authRoutes");
+const carreraRoutes = require('./routes/carreraRoutes');
+const cursoRoutes = require('./routes/cursoRoutes');
+const grupoRoutes = require('./routes/grupoRoutes');
+const institucionRoutes = require('./routes/institucionRoutes');
+const periodoRoutes = require('./routes/periodoRoutes');
+const profesorRoutes = require('./routes/profesorRoutes');
 
 const app = express();
 
