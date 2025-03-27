@@ -2,7 +2,7 @@ const { Profesor, ProfesorTelefono, TipoIdentificacion } = require("../models");
 const { Op } = require("sequelize");
 const jwt = require("jsonwebtoken");
 const { registrarBitacora } = require("../services/bitacoraService");
-const { validarEmail, esMayorDeEdad, validarNombre } = require("../utils/validaciones");
+const { validarEmail, esMayorDeEdad, validarNombre, returnFecha } = require("../utils/validaciones");
 
 // Dominio parametrizable
 const DOMINIO_CORREO = process.env.DOMINIO_CORREO || "cuc.ac.cr";
@@ -52,10 +52,12 @@ const obtenerProfesorPorId = async (req, res) => {
 // 📌 Crear profesor
 const crearProfesor = async (req, res) => {
   try {
+    console.log("crearProfesor")
     console.log(req.body)
-    const { identificacion, tipo_identificacion_id, email, nombre_completo, fecha_nacimiento, telefonos } = req.body;
+    let { identificacion, tipo_identificacion_id, email, nombre_completo, fecha_nacimiento, telefonos } = req.body;
 
     if (!identificacion || !tipo_identificacion_id || !email || !nombre_completo || !fecha_nacimiento || !telefonos?.length) {
+      console.log("Todos los campos son obligatorios")
       return res.status(400).json({ error: "Todos los campos son obligatorios" });
     }
 
@@ -67,22 +69,41 @@ const crearProfesor = async (req, res) => {
       String(fecha_nacimiento).trim() === "" ||
       telefonos.some(tel => String(tel).trim() === "")
     ) {
+      console.log("No puedes enviar vacíos")
       return res.status(400).json({ error: "No puedes enviar vacíos" });
     }
 
+    // Convertir 'identificacion' y 'telefonos' a números (enteros)
+    identificacion = parseInt(identificacion, 10);
+    if (isNaN(identificacion)) {
+      console.log("Identificación inválida");
+      return res.status(400).json({ error: "Identificación inválida" });
+    }
+
+    telefonos = telefonos.map(tel => parseInt(tel, 10));
+    if (telefonos.some(tel => isNaN(tel))) {
+      console.log("Uno o más números de teléfono son inválidos");
+      return res.status(400).json({ error: "Uno o más números de teléfono son inválidos" });
+    }
+
     if (!validarNombre(nombre_completo)) {
+      console.log("Nombre inválido (solo letras y espacios)")
       return res.status(400).json({ error: "Nombre inválido (solo letras y espacios)" });
     }
 
     if (!esMayorDeEdad(fecha_nacimiento)) {
+      console.log("Debe ser mayor de edad")
       return res.status(400).json({ error: "Debe ser mayor de edad" });
     }
 
     if (!validarEmail(email, DOMINIO_CORREO)) {
+      console.log(`Email debe ser del dominio ${DOMINIO_CORREO}`)
       return res.status(400).json({ error: `Email debe ser del dominio ${DOMINIO_CORREO}` });
     }
 
-    const profesor = await Profesor.create({ identificacion, tipo_identificacion_id, email, nombre_completo, fecha_nacimiento });
+    fecha_nacimiento = returnFecha(fecha_nacimiento)
+
+    let profesor = await Profesor.create({ identificacion, tipo_identificacion_id, email, nombre_completo, fecha_nacimiento });
 
     await Promise.all(telefonos.map(tel => ProfesorTelefono.create({ telefono: tel, profesor_id: profesor.id })));
 
